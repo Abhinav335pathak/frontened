@@ -97,9 +97,11 @@ const Login = ({ role = 'user' }) => {
         <div className="mt-6 text-center">
           <p className="text-gray-600">
             Don&apos;t have an account?{' '}
-            <Link to={`/${role}/register`} className="text-orange-500 hover:underline font-semibold">
-              Register here
-            </Link>
+            {role !== 'admin' && (
+              <Link to={`/${role}/register`} className="text-orange-500 hover:underline font-semibold">
+                Register here
+              </Link>
+            )}
           </p>
         </div>
       </div>
