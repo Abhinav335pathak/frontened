@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // Backend URL from env (Vercel will inject this)
-const API_URL = import.meta.env.VITE_API_BASE || "https://backend-env.up.railway.app" || "http://backend-production-10c3.up.railway.app;
+const API_URL = import.meta.env.VITE_API_BASE || "https://backend-env.up.railway.app" || "http://backend-production-10c3.up.railway.app";
 
 const api = axios.create({
   baseURL: API_URL,
