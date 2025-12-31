@@ -70,20 +70,28 @@ export const menuItemApi = {
   getAll: (restaurantId) =>
     restaurantId
       ? api.get(`/api/menu-items/restaurant/${restaurantId}`)
-      : api.get("/api/menu-items"),
+      : api.get('/api/menu-items'),
+
   getById: (id) => api.get(`/api/menu-items/${id}`),
-  create: (data) => api.post("/api/menu-items", data),
+
+  create: (data) => api.post('/api/menu-items', data),
+
   update: (id, data) => api.put(`/api/menu-items/${id}`, data),
+
   delete: (id) => api.delete(`/api/menu-items/${id}`),
+
   uploadImage: async (file) => {
     const formData = new FormData();
-    formData.append("image", file);
-    const res = await api.post("/api/upload", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
+    formData.append('file', file); // ✅ MUST be "file"
+
+    const res = await api.post('/api/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
     });
-    return res.data.url;
+
+    return res.data; // { secure_url, public_id }
   },
 };
+
 
 // ---------- ORDER API ----------
 export const orderApi = {
