@@ -80,49 +80,52 @@ const RestaurantManage = () => {
 // Updated handleAddItem to upload file first, then create menu item
 const handleAddItem = async (e) => {
   e.preventDefault();
-  if (!newItem.name || !newItem.price) return toast.error('Please fill all fields');
+
+  if (!newItem.name || !newItem.price) {
+    return toast.error('Please fill all fields');
+  }
 
   try {
-    let imageUrl = newItem.imageUrl || '';
+    let imageUrl = '';
+    let publicId = '';
 
+    // ✅ Upload image first
     if (newItem.imageFile) {
-      const formData = new FormData();
-      formData.append('file', newItem.imageFile); // ✅ only append the file
-
-      const uploadRes = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!uploadRes.ok) {
-        const text = await uploadRes.text();
-        throw new Error(`Upload failed: ${uploadRes.status} ${text}`);
-      }
-
-      const uploadBody = await uploadRes.json();
-      imageUrl = uploadBody.secure_url; // ✅ Cloudinary secure URL
+      const uploadRes = await menuItemApi.uploadImage(newItem.imageFile);
+      imageUrl = uploadRes.secure_url;
+      publicId = uploadRes.public_id;
     }
 
-    const createPayload = {
-      ...newItem,
+    // ✅ Then create menu item
+    const payload = {
+      name: newItem.name,
+      description: newItem.description,
       price: parseFloat(newItem.price),
+      category: newItem.category,
       imageUrl,
+      publicId,
     };
 
-    delete createPayload.imageFile;
+    const res = await menuItemApi.create(payload);
 
-    const res = await menuItemApi.create(createPayload);
-
-    const createdItem = res?.data?.menuItem ?? res?.data;
-    setMenu(prev => [...prev, createdItem]);
+    setMenu((prev) => [...prev, res.data.menuItem]);
     toast.success('Menu item added');
-    setNewItem({ name: '', description: '', price: '', category: 'starter', imageUrl: '', imageFile: null });
+
+    setNewItem({
+      name: '',
+      description: '',
+      price: '',
+      category: 'starter',
+      imageFile: null,
+    });
+
     setShowForm(false);
   } catch (err) {
     console.error(err);
     toast.error('Failed to add menu item');
   }
 };
+
 
 
 
